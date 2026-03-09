@@ -18,22 +18,31 @@
 
 ## 📋 Tabla de Contenidos
 
-- [¿Qué es NoPilot?](#-qué-es-nopilot)
-- [Demo](#-demo)
-- [Características](#-características)
-- [Requisitos](#-requisitos)
-- [Instalación Rápida](#-instalación-rápida)
-- [Configuración](#-configuración)
-- [Uso](#-uso)
-- [Arquitectura](#-arquitectura)
-- [Cómo Funciona](#-cómo-funciona)
-- [Casos de Uso](#-casos-de-uso)
-- [Troubleshooting](#-troubleshooting)
-- [Roadmap](#-roadmap)
-- [Contribuir](#-contribuir)
-- [Licencia](#-licencia)
+- [¿Qué es NoPilot?](#que-es-nopilot)
+- [Demo](#demo)
+- [Características](#caracteristicas)
+- [Requisitos](#requisitos)
+- [Instalación Rápida](#instalacion-rapida)
+- [Configuración](#configuracion)
+- [Uso](#uso)
+- [Arquitectura](#arquitectura)
+- [Cómo Funciona](#como-funciona)
+- [Casos de Uso](#casos-de-uso)
+- [Troubleshooting](#troubleshooting)
+- [Roadmap](#roadmap)
+- [Contribuir](#contribuir)
+- [Licencia](#licencia)
+
+### 📂 Documentación Completa
+
+- [⚡ Quick Start — Guía de Inicio Rápido](docs/QUICKSTART.md)
+- [🏗️ Arquitectura Técnica Detallada](docs/ARCHITECTURE.md)
+- [💬 Ejemplos de Conversaciones](docs/EXAMPLES.md)
+- [📚 Índice de Documentación](docs/README.md)
 
 ---
+
+<a name="que-es-nopilot"></a>
 
 ## 🤔 ¿Qué es NoPilot?
 
@@ -47,6 +56,8 @@
 - ✅ **NoPilot indexa tu proyecto y responde preguntas con contexto completo**
 
 ---
+
+<a name="demo"></a>
 
 ## 🎬 Demo
 
@@ -82,6 +93,8 @@ y sqlite-vec. Sus responsabilidades principales son:
 
 ---
 
+<a name="caracteristicas"></a>
+
 ## ✨ Características
 
 | Característica | Descripción |
@@ -97,6 +110,8 @@ y sqlite-vec. Sus responsabilidades principales son:
 | 🌍 **Cross-Platform** | Windows, Linux, macOS (x64 y ARM64). |
 
 ---
+
+<a name="requisitos"></a>
 
 ## 📦 Requisitos
 
@@ -120,6 +135,8 @@ ollama pull mxbai-embed-large
 **[🚀 Guía completa de instalación paso a paso →](docs/QUICKSTART.md)**
 
 ---
+
+<a name="instalacion-rapida"></a>
 
 ## 🚀 Instalación Rápida
 
@@ -147,6 +164,8 @@ dotnet run
 **[📖 Instalación detallada con troubleshooting →](docs/QUICKSTART.md)**
 
 ---
+
+<a name="configuracion"></a>
 
 ## ⚙️ Configuración
 
@@ -186,6 +205,8 @@ Si cambias `EmbeddingModel` o `EmbeddingDimension`, **elimina `nopilot.db`** y e
 | `all-minilm` | 384 | Muy alta | Baja | Pruebas rápidas |
 
 ---
+
+<a name="uso"></a>
 
 ## 💻 Uso
 
@@ -228,6 +249,8 @@ dotnet run
 
 ---
 
+<a name="arquitectura"></a>
+
 ## 🏗️ Arquitectura
 
 ```
@@ -261,6 +284,8 @@ NoPilot/
 **[🏗️ Arquitectura técnica completa con diagramas →](docs/ARCHITECTURE.md)**
 
 ---
+
+<a name="como-funciona"></a>
 
 ## 🔍 Cómo Funciona
 
@@ -330,6 +355,8 @@ ORDER BY v.distance ASC;
 
 ---
 
+<a name="casos-de-uso"></a>
+
 ## 🎯 Casos de Uso
 
 ### 👨‍💻 Para Desarrolladores
@@ -361,6 +388,8 @@ ORDER BY v.distance ASC;
 **[💡 Ver ejemplos completos de conversaciones →](docs/EXAMPLES.md)**
 
 ---
+
+<a name="troubleshooting"></a>
 
 ## 🔧 Troubleshooting
 
@@ -430,11 +459,13 @@ ollama list
 
 ---
 
+<a name="roadmap"></a>
+
 ## 🧪 Roadmap
 
 ### v0.2 (Próximamente)
 
-- [ ] **Ingesta incremental**: Detectar archivos modificados y reindejar solo esos
+- [ ] **Ingesta incremental**: Detectar archivos modificados y reindexar solo esos
 - [ ] **Progress bar**: Visualización del progreso de ingesta
 - [ ] **Config watcher**: Recargar `appsettings.json` sin reiniciar
 
@@ -461,6 +492,8 @@ ollama list
 **[🗳️ Vota por features](https://github.com/ArmandIsCoding/NoPilot/discussions) o propón nuevas ideas!**
 
 ---
+
+<a name="contribuir"></a>
 
 ## 🤝 Contribuir
 
@@ -497,6 +530,8 @@ Abre un [discussion](https://github.com/ArmandIsCoding/NoPilot/discussions) o [i
 **[📖 Guía completa de contribución →](CONTRIBUTING.md)**
 
 ---
+
+<a name="licencia"></a>
 
 ## 📜 Licencia
 
