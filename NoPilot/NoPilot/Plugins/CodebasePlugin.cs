@@ -1,6 +1,6 @@
 using System.ComponentModel;
+using Microsoft.Extensions.AI;
 using Microsoft.SemanticKernel;
-using Microsoft.SemanticKernel.Embeddings;
 using NoPilot.Services;
 
 namespace NoPilot.Plugins;
@@ -25,9 +25,9 @@ public sealed class CodebasePlugin
         Kernel kernel,
         [Description("Número máximo de resultados a devolver (por defecto 5)")] int topK = 5)
     {
-        var embeddingService = kernel.GetRequiredService<ITextEmbeddingGenerationService>();
-        var embeddings = await embeddingService.GenerateEmbeddingsAsync([query]);
-        var vector = embeddings[0].ToArray();
+        var embeddingService = kernel.GetRequiredService<IEmbeddingGenerator<string, Embedding<float>>>();
+        var embeddings = await embeddingService.GenerateAsync([query]);
+        var vector = embeddings[0].Vector.ToArray();
 
         var results = await _vectorStore.SearchAsync(vector, topK);
 

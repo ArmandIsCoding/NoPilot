@@ -1,5 +1,5 @@
+using Microsoft.Extensions.AI;
 using Microsoft.SemanticKernel;
-using Microsoft.SemanticKernel.Embeddings;
 using NoPilot.Configuration;
 using NoPilot.Models;
 
@@ -46,7 +46,7 @@ public sealed class IngestionService : IIngestionService
             return;
         }
 
-        var embeddingService = _kernel.GetRequiredService<ITextEmbeddingGenerationService>();
+        var embeddingService = _kernel.GetRequiredService<IEmbeddingGenerator<string, Embedding<float>>>();
         int processedFiles = 0;
         int processedChunks = 0;
         int skippedFiles = 0;
@@ -71,7 +71,7 @@ public sealed class IngestionService : IIngestionService
                 {
                     if (cancellationToken.IsCancellationRequested) break;
 
-                    var embeddings = await embeddingService.GenerateEmbeddingsAsync(
+                    var embeddings = await embeddingService.GenerateAsync(
                         [chunkText], cancellationToken: cancellationToken);
 
                     await _vectorStore.UpsertChunkAsync(new DocumentChunk
@@ -79,7 +79,7 @@ public sealed class IngestionService : IIngestionService
                         FilePath = relativePath,
                         Content = chunkText,
                         ChunkIndex = chunkIndex,
-                        Embedding = embeddings[0].ToArray()
+                        Embedding = embeddings[0].Vector.ToArray()
                     });
 
                     processedChunks++;

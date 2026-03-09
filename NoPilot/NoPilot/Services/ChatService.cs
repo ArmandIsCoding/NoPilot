@@ -1,6 +1,6 @@
+using Microsoft.Extensions.AI;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
-using Microsoft.SemanticKernel.Embeddings;
 using NoPilot.Models;
 
 namespace NoPilot.Services;
@@ -28,16 +28,16 @@ public sealed class ChatService
 
     public async Task ChatAsync(string userMessage, CancellationToken cancellationToken = default)
     {
-        var embeddingService = _kernel.GetRequiredService<ITextEmbeddingGenerationService>();
+        var embeddingService = _kernel.GetRequiredService<IEmbeddingGenerator<string, Embedding<float>>>();
         var chatCompletion = _kernel.GetRequiredService<IChatCompletionService>();
 
         Console.ForegroundColor = ConsoleColor.DarkGray;
         Console.Write("[Buscando contexto relevante...]");
         Console.ResetColor();
 
-        var embeddings = await embeddingService.GenerateEmbeddingsAsync(
+        var embeddings = await embeddingService.GenerateAsync(
             [userMessage], cancellationToken: cancellationToken);
-        var queryVector = embeddings[0].ToArray();
+        var queryVector = embeddings[0].Vector.ToArray();
         var searchResults = await _vectorStore.SearchAsync(queryVector, topK: 5);
 
         Console.Write("\r                                      \r");

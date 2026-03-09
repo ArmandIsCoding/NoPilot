@@ -28,7 +28,7 @@ services.AddSingleton(sp =>
     var cfg = sp.GetRequiredService<AppSettings>();
     var builder = Kernel.CreateBuilder();
     builder.AddOllamaChatCompletion(cfg.Ollama.ChatModel, new Uri(cfg.Ollama.Endpoint));
-    builder.AddOllamaTextEmbeddingGeneration(cfg.Ollama.EmbeddingModel, new Uri(cfg.Ollama.Endpoint));
+    builder.AddOllamaEmbeddingGenerator(cfg.Ollama.EmbeddingModel, new Uri(cfg.Ollama.Endpoint));
     var kernel = builder.Build();
     kernel.Plugins.AddFromObject(sp.GetRequiredService<CodebasePlugin>());
     return kernel;
