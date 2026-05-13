@@ -6,8 +6,9 @@ using NoPilot.Plugins;
 using NoPilot.Services;
 
 // ── Configuración ────────────────────────────────────────────────────────────
+// Cargamos appsettings desde el directorio del ejecutable para evitar fallos al correr desde otra carpeta.
 var configuration = new ConfigurationBuilder()
-    .SetBasePath(Directory.GetCurrentDirectory())
+    .SetBasePath(AppContext.BaseDirectory)
     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: false)
     .Build();
 
@@ -20,6 +21,7 @@ var services = new ServiceCollection();
 services.AddSingleton(settings);
 services.AddSingleton<IVectorStoreService, VectorStoreService>();
 services.AddSingleton<IIngestionService, IngestionService>();
+services.AddSingleton<FileEditService>();
 services.AddSingleton<ChatService>();
 services.AddSingleton<CodebasePlugin>();
 
@@ -131,6 +133,7 @@ static void PrintHelp()
     Console.WriteLine("  AYUDA     → Muestra este mensaje");
     Console.WriteLine("  SALIR     → Cierra la aplicación");
     Console.WriteLine("  <texto>   → Pregunta sobre el código indexado");
+    Console.WriteLine("  <edicion> → Pide cambios en un archivo (ej: traduce docs/README.md al ingles)");
     Console.ResetColor();
     Console.WriteLine();
 }

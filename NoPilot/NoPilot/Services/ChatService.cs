@@ -9,6 +9,7 @@ public sealed class ChatService
 {
     private readonly Kernel _kernel;
     private readonly IVectorStoreService _vectorStore;
+    private readonly FileEditService _fileEditService;
 
     private readonly List<(string Role, string Message)> _conversationHistory = [];
 
@@ -20,14 +21,18 @@ public sealed class ChatService
         Responde siempre en el mismo idioma que usa el usuario.
         """;
 
-    public ChatService(Kernel kernel, IVectorStoreService vectorStore)
+    public ChatService(Kernel kernel, IVectorStoreService vectorStore, FileEditService fileEditService)
     {
         _kernel = kernel;
         _vectorStore = vectorStore;
+        _fileEditService = fileEditService;
     }
 
     public async Task ChatAsync(string userMessage, CancellationToken cancellationToken = default)
     {
+        if (await _fileEditService.TryHandleEditRequestAsync(userMessage, cancellationToken))
+            return;
+
         var embeddingService = _kernel.GetRequiredService<IEmbeddingGenerator<string, Embedding<float>>>();
         var chatCompletion = _kernel.GetRequiredService<IChatCompletionService>();
 
