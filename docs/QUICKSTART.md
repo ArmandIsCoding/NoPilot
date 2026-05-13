@@ -1,16 +1,16 @@
-# ⚡ Guía de Inicio Rápido
+# Quickstart Guide
 
-Pon en marcha **NoPilot** en menos de 5 minutos.
+Get NoPilot up and running in less than 5 minutes.
 
 ---
 
-## Paso 1: Instalar Ollama
+## Step 1: Install Ollama
 
 ### Windows
 
 ```powershell
-# Descarga el instalador desde https://ollama.ai/download
-# O usa winget:
+# Download the installer from https://ollama.ai/download
+# Or use winget:
 winget install Ollama.Ollama
 ```
 
@@ -28,21 +28,21 @@ curl -fsSL https://ollama.ai/install.sh | sh
 
 ---
 
-## Paso 2: Descargar Modelos
+## Step 2: Download Models
 
 ```bash
-# Inicia el servidor Ollama (si no está corriendo)
+# Start the Ollama server (if not running)
 ollama serve
 
-# En otra terminal, descarga los modelos (esto puede tardar unos minutos)
+# In another terminal, download the models (this may take a few minutes)
 ollama pull deepseek-coder:6.7b      # ~3.8 GB
 ollama pull mxbai-embed-large        # ~669 MB
 
-# Verifica que se descargaron correctamente
+# Verify that they were downloaded correctly
 ollama list
 ```
 
-**Salida esperada:**
+**Expected Output:**
 ```
 NAME                        ID              SIZE      MODIFIED
 deepseek-coder:6.7b         a18a4a4          3.8 GB    2 minutes ago
@@ -51,22 +51,22 @@ mxbai-embed-large:latest    468836162        669 MB    1 minute ago
 
 ---
 
-## Paso 3: Clonar y Configurar NoPilot
+## Step 3: Clone and Configure NoPilot
 
 ```bash
-# Clona el repositorio
+# Clone the repository
 git clone https://github.com/ArmandIsCoding/NoPilot.git
 cd NoPilot/NoPilot
 
-# Copia el archivo de configuración de ejemplo
+# Copy the sample configuration file
 cp appsettings.example.json appsettings.json
 
-# Edita appsettings.json y cambia la ruta de SourceFolder
-# Windows: "C:\\Ruta\\A\\Tu\\Proyecto"
-# Linux/Mac: "/home/usuario/mi-proyecto"
+# Edit appsettings.json and change the SourceFolder path
+# Windows: "C:\\Path\\To\\Your\\Project"
+# Linux/Mac: "/home/user/my-project"
 ```
 
-### Ejemplo `appsettings.json` (Windows):
+### Sample `appsettings.json` (Windows):
 
 ```json
 {
@@ -77,7 +77,7 @@ cp appsettings.example.json appsettings.json
     "EmbeddingDimension": 1024
   },
   "Ingestion": {
-    "SourceFolder": "D:\\MiProyecto\\src",
+    "SourceFolder": "D:\\MyProject\\src",
     "SupportedExtensions": [".cs", ".js", ".ts", ".py", ".md"],
     "ChunkSize": 1500,
     "ChunkOverlap": 200,
@@ -91,138 +91,137 @@ cp appsettings.example.json appsettings.json
 
 ---
 
-## Paso 4: Compilar y Ejecutar
+## Step 4: Compile and Run
 
 ```bash
-# Restaura paquetes NuGet
+# Restore NuGet packages
 dotnet restore
 
-# Compila el proyecto
+# Build the project
 dotnet build
 
-# Ejecuta NoPilot
+# Run NoPilot
 dotnet run
 ```
 
-**Salida esperada:**
+**Expected Output:**
 
 ```
 ╔══════════════════════════════════════════════════╗
-║       NoPilot  ·  Asistente de Código Local      ║
+║       NoPilot  ·  Local Code Assistant        ║
 ╚══════════════════════════════════════════════════╝
   Chat model   : deepseek-coder:6.7b
   Embeddings   : mxbai-embed-large  (1024d)
   Ollama       : http://localhost:11434
-  Carpeta      : D:\MiProyecto\src
-  Base de datos: nopilot.db  (0 chunks indexados)
+  Folder      : D:\MyProject\src
+  Database    : nopilot.db  (0 chunks indexed)
 
-  INGESTAR  → Indexa todos los archivos de la carpeta configurada
-  LIMPIAR   → Elimina el índice y el historial de chat
-  AYUDA     → Muestra este mensaje
-  SALIR     → Cierra la aplicación
-  <texto>   → Pregunta sobre el código indexado
+  INGEST     → Indexes all files in the configured folder
+  CLEAN      → Removes the index and chat history
+  HELP        → Displays this message
+  EXIT        → Closes the application
+  <text>     → Asks about the indexed code
 
 >>
 ```
 
 ---
 
-## Paso 5: Indexar tu Código
+## Step 5: Index Your Code
 
 ```
->> INGESTAR
-[INGESTAR] Limpiando datos anteriores...
-[INGESTAR] 143 archivos encontrados para indexar.
-[INGESTAR] 143/143 archivos | 1247 chunks | 0 omitidos
-[INGESTAR] Completado: 143 archivos, 1247 chunks indexados, 0 omitidos.
+>> INGEST
+[INGEST] Cleaning up previous data...
+[INGEST] 143 files found to index.
+[INGEST] 143/143 files | 1247 chunks | 0 omitted
+[INGEST] Complete: 143 files, 1247 chunks indexed, 0 omitted.
 ```
 
-⏱️ **Tiempo estimado:**
-- 10 archivos → ~30 segundos
-- 100 archivos → ~5 minutos
-- 500 archivos → ~20 minutos
+⏱️ **Estimated Time:**
+- 10 files → ~30 seconds
+- 100 files → ~5 minutes
+- 500 files → ~20 minutes
 
 ---
 
-## Paso 6: ¡Chatea con tu Código!
+## Step 6: Chat with Your Code!
 
 ```
->> ¿Qué hace la clase VectorStoreService?
-[Buscando contexto relevante...]
-[NoPilot]: VectorStoreService es responsable de gestionar el almacenamiento 
-y búsqueda de embeddings usando SQLite con la extensión vec0...
+>> What does the VectorStoreService class do?
+[Searching for relevant context...]
+[NoPilot]: VectorStoreService is responsible for managing storage and searching 
+embeddings using SQLite with the vec0...
 
->> ¿Cómo puedo añadir soporte para archivos .jsx?
-[NoPilot]: Para añadir soporte para archivos .jsx, actualiza el array 
-SupportedExtensions en appsettings.json:
+>> How can I add support for .jsx files?
+[NoPilot]: To add support for .jsx files, update the SupportedExtensions array in appsettings.json:
 
 ```json
 "SupportedExtensions": [".cs", ".js", ".jsx", ".ts", ".tsx", ...]
 ```
 
-Luego ejecuta LIMPIAR e INGESTAR de nuevo para reindexar con los nuevos tipos.
+Then run CLEAN and INGEST again to reindex with the new types.
 ```
 
 ---
 
-## 🚨 Troubleshooting Rápido
+## 🚨 Quick Troubleshooting
 
-### "Connection refused" al conectar con Ollama
+### "Connection refused" when connecting to Ollama
 
 ```bash
-# Verifica que Ollama está corriendo
+# Check if Ollama is running
 curl http://localhost:11434/api/tags
 
-# Si no responde, inicia el servidor:
+# If not, start the server:
 ollama serve
 ```
 
-### "No se encontraron archivos para indexar"
+### "No files found to index"
 
-- Revisa que `SourceFolder` en `appsettings.json` sea una ruta válida
-- Verifica que haya archivos con las extensiones en `SupportedExtensions`
-- Windows: usa rutas con doble backslash `C:\\Ruta\\Al\\Proyecto`
+- Verify that `SourceFolder` in `appsettings.json` is a valid path
+- Check that there are files with the extensions in `SupportedExtensions`
+- Windows: use double backslashes for paths `C:\\Path\\To\\Project`
 
-### Ingesta muy lenta
+### Ingestion is very slow
 
-- Reduce `ChunkSize` a 1000 (menos tokens por embedding)
-- Limita `SupportedExtensions` a solo las extensiones importantes
-- Añade más exclusiones en `MaxFileSizeBytes` (ej: 512KB en lugar de 1MB)
+- Reduce `ChunkSize` to 1000 (less tokens per embedding)
+- Limit `SupportedExtensions` to only important extensions
+- Add exclusions in `MaxFileSizeBytes` (e.g. 512KB instead of 1MB)
 
-### El modelo responde en inglés aunque pregunto en español
+### The model responds in English despite me asking in Spanish
 
-- Reformula la pregunta con más contexto en español
-- El model `deepseek-coder` es multilingüe pero puede preferir inglés en contextos técnicos
-- Alternativa: usa `deepseek-coder:33b` o `codellama:13b` para mejor multilingüismo
-
----
-
-## 🎉 ¡Listo!
-
-Ya tienes NoPilot corriendo. Ahora prueba:
-
-```
->> Explica la arquitectura de este proyecto
-
->> ¿Dónde se maneja la configuración de la base de datos?
-
->> ¿Qué patrones de diseño se usan?
-
->> Lista todos los servicios registrados en DI
-```
+- Reformulate the question with more context in Spanish
+- The model `deepseek-coder` is multilingual but may prefer English in technical contexts
+- Alternative: use `deepseek-coder:33b` or `codellama:13b` for better multilinguism
 
 ---
 
-## 📚 Siguientes Pasos
+## 🎉 You're Done!
 
-- Lee la [Arquitectura Técnica](ARCHITECTURE.md) para entender los detalles internos
-- Revisa [EXAMPLES.md](EXAMPLES.md) para más casos de uso
-- Contribuye en [GitHub](https://github.com/ArmandIsCoding/NoPilot) — ver [CONTRIBUTING.md](../CONTRIBUTING.md)
+You now have NoPilot running. Try:
+
+```
+>> Explain the architecture of this project
+
+>> Where is database configuration managed?
+
+>> What design patterns are used?
+
+>> List all services registered in DI
+```
+
+---
+
+## 📚 Next Steps
+
+- Read the [Technical Architecture](ARCHITECTURE.md) for internal details
+- Check out [EXAMPLES.md](EXAMPLES.md) for more use cases
+- Contribute on [GitHub](https://github.com/ArmandIsCoding/NoPilot) — see [CONTRIBUTING.md](../CONTRIBUTING.md)
 
 ---
 
 <div align="center">
 
-**[🏠 Volver al inicio](../README.md)**
+**[🏠 Go back to start](../README.md)**
 
 </div>

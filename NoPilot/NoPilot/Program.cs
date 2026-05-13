@@ -133,7 +133,8 @@ static void PrintHelp()
     Console.WriteLine("  AYUDA     → Muestra este mensaje");
     Console.WriteLine("  SALIR     → Cierra la aplicación");
     Console.WriteLine("  <texto>   → Pregunta sobre el código indexado");
-    Console.WriteLine("  <edicion> → Pide cambios en un archivo (ej: traduce docs/README.md al ingles)");
+    Console.WriteLine("  <edicion> → Edita archivos existentes (con backup y diff unificado)");
+    Console.WriteLine("  <crear>   → Crea nuevos archivos (ej: crea config.json con...)");
     Console.ResetColor();
     Console.WriteLine();
 }
