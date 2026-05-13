@@ -2,7 +2,7 @@
 
 <div align="center">
 
-**Asistente de código local potenciado por IA que indexa tu codebase y responde preguntas usando Retrieval-Augmented Generation (RAG)**
+**Local AI-powered code assistant that indexes your codebase and answers questions using Retrieval-Augmented Generation (RAG)**
 
 [![.NET](https://img.shields.io/badge/.NET-10.0-512BD4?logo=dotnet)](https://dotnet.microsoft.com/)
 [![Semantic Kernel](https://img.shields.io/badge/Semantic_Kernel-1.73.0-00A4EF?logo=microsoft)](https://github.com/microsoft/semantic-kernel)
@@ -16,44 +16,44 @@
 
 ---
 
-## 📋 Tabla de Contenidos
+## 📋 Table of Contents
 
-- [¿Qué es NoPilot?](#que-es-nopilot)
+- [What is NoPilot?](#what-is-nopilot)
 - [Demo](#demo)
-- [Características](#caracteristicas)
-- [Requisitos](#requisitos)
-- [Instalación Rápida](#instalacion-rapida)
-- [Configuración](#configuracion)
-- [Uso](#uso)
-- [Arquitectura](#arquitectura)
-- [Cómo Funciona](#como-funciona)
-- [Casos de Uso](#casos-de-uso)
+- [Features](#features)
+- [Requirements](#requirements)
+- [Quick Start](#quick-start)
+- [Configuration](#configuration)
+- [Usage](#usage)
+- [Architecture](#architecture)
+- [How It Works](#how-it-works)
+- [Use Cases](#use-cases)
 - [Troubleshooting](#troubleshooting)
 - [Roadmap](#roadmap)
-- [Contribuir](#contribuir)
-- [Licencia](#licencia)
+- [Contributing](#contributing)
+- [License](#license)
 
-### 📂 Documentación Completa
+### 📂 Full Documentation
 
-- [⚡ Quick Start — Guía de Inicio Rápido](docs/QUICKSTART.md)
-- [🏗️ Arquitectura Técnica Detallada](docs/ARCHITECTURE.md)
-- [💬 Ejemplos de Conversaciones](docs/EXAMPLES.md)
-- [📚 Índice de Documentación](docs/README.md)
+- [⚡ Quick Start Guide](docs/QUICKSTART.md)
+- [🏗️ Detailed Technical Architecture](docs/ARCHITECTURE.md)
+- [💬 Conversation Examples](docs/EXAMPLES.md)
+- [📚 Documentation Index](docs/README.md)
 
 ---
 
-<a name="que-es-nopilot"></a>
+<a name="what-is-nopilot"></a>
 
-## 🤔 ¿Qué es NoPilot?
+## 🤔 What is NoPilot?
 
-**NoPilot** es una aplicación de consola .NET que convierte tu codebase local en una base de conocimiento semántica. Utiliza **Semantic Kernel**, **Ollama** (ejecución local de LLMs), y **sqlite-vec** para ofrecer un chatbot experto en tu código sin enviar datos a la nube.
+**NoPilot** is a .NET console application that turns your local codebase into a semantic knowledge base. It uses **Semantic Kernel**, **Ollama** (local LLM execution), and **sqlite-vec** to provide a code-expert chatbot without sending any data to the cloud.
 
-### El problema que resuelve
+### The problem it solves
 
-- ❌ No quieres compartir tu código con servicios cloud
-- ❌ GitHub Copilot no conoce tu codebase privada completa
-- ❌ Buscar código con `grep` no entiende semántica ni contexto
-- ✅ **NoPilot indexa tu proyecto y responde preguntas con contexto completo**
+- ❌ You don't want to share your code with cloud services
+- ❌ GitHub Copilot doesn't know your entire private codebase
+- ❌ Searching code with `grep` doesn't understand semantics or context
+- ✅ **NoPilot indexes your project and answers questions with full context**
 
 ---
 
@@ -63,113 +63,113 @@
 
 ```plaintext
 ╔══════════════════════════════════════════════════╗
-║       NoPilot  ·  Asistente de Código Local      ║
+║         NoPilot  ·  Local Code Assistant         ║
 ╚══════════════════════════════════════════════════╝
   Chat model   : deepseek-coder:6.7b
   Embeddings   : mxbai-embed-large  (1024d)
   Ollama       : http://localhost:11434
-  Carpeta      : C:\MyProject
-  Base de datos: nopilot.db  (2891 chunks indexados)
+  Folder       : C:\MyProject
+  Database     : nopilot.db  (2891 chunks indexed)
 
->> ¿Cómo está estructurado el patrón de inyección de dependencias?
-[Buscando contexto relevante...]
-[NoPilot]: El proyecto utiliza Microsoft.Extensions.DependencyInjection 
-con un patrón estándar. En Program.cs se registran:
+>> How is the dependency injection pattern structured?
+[Searching for relevant context...]
+[NoPilot]: The project uses Microsoft.Extensions.DependencyInjection
+with a standard pattern. In Program.cs the following are registered:
 
-1. AppSettings como singleton desde appsettings.json
-2. VectorStoreService para gestión de SQLite + vec0
-3. IngestionService para procesamiento de archivos
-4. ChatService para orquestación RAG
-5. Semantic Kernel configurado con Ollama para chat y embeddings...
+1. AppSettings as a singleton from appsettings.json
+2. VectorStoreService for SQLite + vec0 management
+3. IngestionService for file processing
+4. ChatService for RAG orchestration
+5. Semantic Kernel configured with Ollama for chat and embeddings...
 
->> ¿Qué hace VectorStoreService?
-[NoPilot]: VectorStoreService encapsula toda la interacción con SQLite
-y sqlite-vec. Sus responsabilidades principales son:
-- Inicializar el esquema de base de datos (chunks + vec_chunks)
-- Cargar la extensión nativa vec0 dinámicamente según la plataforma...
+>> What does VectorStoreService do?
+[NoPilot]: VectorStoreService encapsulates all interaction with SQLite
+and sqlite-vec. Its main responsibilities are:
+- Initialize the database schema (chunks + vec_chunks)
+- Dynamically load the native vec0 extension based on the platform...
 ```
 
-**[📺 Ver más ejemplos de uso →](docs/EXAMPLES.md)**
+**[📺 See more usage examples →](docs/EXAMPLES.md)**
 
 ---
 
-<a name="caracteristicas"></a>
+<a name="features"></a>
 
-## ✨ Características
+## ✨ Features
 
-| Característica | Descripción |
+| Feature | Description |
 |---|---|
-| 🏠 **100% Local** | Todo corre en tu máquina. Sin APIs externas, sin telemetría. |
-| 🧠 **RAG Semántico** | Búsqueda vectorial con embeddings para encontrar código relevante. |
-| 💬 **Chat con Historial** | Mantiene contexto de conversación (últimas 5 rondas). |
-| ⚡ **Streaming** | Respuestas en tiempo real token por token. |
-| 🔌 **Configurable** | Modelos, carpetas, extensiones de archivo — todo en `appsettings.json`. |
-| 📦 **SQLite + sqlite-vec** | Base de datos embebida con soporte nativo de vectores (KNN search). |
-| 🎯 **Chunking Inteligente** | División de archivos con overlap para preservar contexto. |
-| 🛠️ **Semantic Kernel** | Orquestación con plugins y function calling. |
-| 🌍 **Cross-Platform** | Windows, Linux, macOS (x64 y ARM64). |
+| 🏠 **100% Local** | Everything runs on your machine. No external APIs, no telemetry. |
+| 🧠 **Semantic RAG** | Vector search with embeddings to find relevant code. |
+| 💬 **Chat with History** | Maintains conversation context (last 5 rounds). |
+| ⚡ **Streaming** | Real-time responses token by token. |
+| 🔌 **Configurable** | Models, folders, file extensions — all in `appsettings.json`. |
+| 📦 **SQLite + sqlite-vec** | Embedded database with native vector support (KNN search). |
+| 🎯 **Smart Chunking** | File splitting with overlap to preserve context. |
+| 🛠️ **Semantic Kernel** | Orchestration with plugins and function calling. |
+| 🌍 **Cross-Platform** | Windows, Linux, macOS (x64 and ARM64). |
 
 ---
 
-<a name="requisitos"></a>
+<a name="requirements"></a>
 
-## 📦 Requisitos
+## 📦 Requirements
 
 ### Software
 
-- **.NET 10 SDK** ([Descargar aquí](https://dotnet.microsoft.com/download/dotnet/10.0))
-- **Ollama** instalado y corriendo localmente ([Guía de instalación](https://ollama.ai/download))
+- **.NET 10 SDK** ([Download here](https://dotnet.microsoft.com/download/dotnet/10.0))
+- **Ollama** installed and running locally ([Installation guide](https://ollama.ai/download))
 
-### Modelos de Ollama
+### Ollama Models
 
-Ejecuta estos comandos para descargar los modelos necesarios:
+Run these commands to download the required models:
 
 ```bash
-# Modelo de chat (6.7B parámetros, especializado en código)
+# Chat model (6.7B parameters, specialized in code)
 ollama pull deepseek-coder:6.7b
 
-# Modelo de embeddings (1024 dimensiones, optimizado para RAG)
+# Embeddings model (1024 dimensions, optimized for RAG)
 ollama pull mxbai-embed-large
 ```
 
-**[🚀 Guía completa de instalación paso a paso →](docs/QUICKSTART.md)**
+**[🚀 Full step-by-step installation guide →](docs/QUICKSTART.md)**
 
 ---
 
-<a name="instalacion-rapida"></a>
+<a name="quick-start"></a>
 
-## 🚀 Instalación Rápida
+## 🚀 Quick Start
 
 ```bash
-# 1. Clona el repositorio
+# 1. Clone the repository
 git clone https://github.com/ArmandIsCoding/NoPilot.git
 cd NoPilot/NoPilot
 
-# 2. Configura la carpeta de origen
+# 2. Set the source folder
 cp appsettings.example.json appsettings.json
-# Edita appsettings.json y cambia "SourceFolder" a tu proyecto
+# Edit appsettings.json and change "SourceFolder" to your project path
 
-# 3. Compila y ejecuta
+# 3. Build and run
 dotnet restore
 dotnet build
 dotnet run
 
-# 4. Indexa tu código
->> INGESTAR
+# 4. Index your code
+>> INGEST
 
-# 5. ¡Empieza a preguntar!
->> ¿Cómo funciona el sistema de autenticación?
+# 5. Start asking questions!
+>> How does the authentication system work?
 ```
 
-**[📖 Instalación detallada con troubleshooting →](docs/QUICKSTART.md)**
+**[📖 Detailed installation with troubleshooting →](docs/QUICKSTART.md)**
 
 ---
 
-<a name="configuracion"></a>
+<a name="configuration"></a>
 
-## ⚙️ Configuración
+## ⚙️ Configuration
 
-Toda la configuración está centralizada en `NoPilot/appsettings.json`:
+All configuration is centralized in `NoPilot/appsettings.json`:
 
 ```json
 {
@@ -180,7 +180,7 @@ Toda la configuración está centralizada en `NoPilot/appsettings.json`:
     "EmbeddingDimension": 1024
   },
   "Ingestion": {
-    "SourceFolder": "C:\\MisProyectos",
+    "SourceFolder": "C:\\MyProjects",
     "SupportedExtensions": [".cs", ".ts", ".js", ".py", ".go", ".md"],
     "ChunkSize": 1500,
     "ChunkOverlap": 200,
@@ -192,35 +192,35 @@ Toda la configuración está centralizada en `NoPilot/appsettings.json`:
 }
 ```
 
-### 🔄 Cambiar modelos
+### 🔄 Changing models
 
-Si cambias `EmbeddingModel` o `EmbeddingDimension`, **elimina `nopilot.db`** y ejecuta `INGESTAR` de nuevo (el esquema de la tabla vectorial depende de la dimensión).
+If you change `EmbeddingModel` or `EmbeddingDimension`, **delete `nopilot.db`** and run `INGEST` again (the vector table schema depends on the dimension).
 
-**Modelos alternativos:**
+**Alternative models:**
 
-| Modelo | Dimensión | Velocidad | Calidad | Uso recomendado |
-|--------|-----------|-----------|---------|-----------------|
-| `mxbai-embed-large` | 1024 | Media | Alta | **Recomendado** (equilibrado) |
-| `nomic-embed-text` | 768 | Alta | Media | Proyectos grandes (>50K archivos) |
-| `all-minilm` | 384 | Muy alta | Baja | Pruebas rápidas |
+| Model | Dimension | Speed | Quality | Recommended use |
+|-------|-----------|-------|---------|-----------------|
+| `mxbai-embed-large` | 1024 | Medium | High | **Recommended** (balanced) |
+| `nomic-embed-text` | 768 | High | Medium | Large projects (>50K files) |
+| `all-minilm` | 384 | Very high | Low | Quick tests |
 
 ---
 
-<a name="uso"></a>
+<a name="usage"></a>
 
-## 💻 Uso
+## 💻 Usage
 
-### Comandos disponibles
+### Available commands
 
-| Comando | Descripción | Ejemplo |
+| Command | Description | Example |
 |---------|-------------|---------|
-| `INGESTAR` | Indexa todos los archivos de `SourceFolder` | Primera vez o después de cambios grandes |
-| `LIMPIAR` | Elimina el índice completo y el historial | Antes de cambiar modelos |
-| `AYUDA` | Muestra la lista de comandos | - |
-| `SALIR` | Cierra la aplicación | Ctrl+C también funciona |
-| *cualquier texto* | Chatea con el asistente sobre tu código | "¿Qué hace la clase UserService?" |
+| `INGEST` | Indexes all files from `SourceFolder` | First time or after large changes |
+| `CLEAR` | Deletes the full index and history | Before changing models |
+| `HELP` | Shows the list of commands | - |
+| `EXIT` | Closes the application | Ctrl+C also works |
+| *any text* | Chat with the assistant about your code | "What does the UserService class do?" |
 
-### Flujo típico de trabajo
+### Typical workflow
 
 ```bash
 # Terminal 1: Ollama Server
@@ -230,100 +230,100 @@ ollama serve
 cd NoPilot
 dotnet run
 
-# Primera vez: indexar
->> INGESTAR
-[INGESTAR] 347 archivos | 2891 chunks indexados
+# First time: index
+>> INGEST
+[INGEST] 347 files | 2891 chunks indexed
 
-# Chatear
->> Explica la arquitectura general del proyecto
->> ¿Dónde se define la conexión a la base de datos?
->> Lista todos los servicios registrados en DI
->> ¿Qué patrones de diseño se usan en el módulo de autenticación?
+# Chat
+>> Explain the general architecture of the project
+>> Where is the database connection defined?
+>> List all services registered in DI
+>> What design patterns are used in the authentication module?
 
-# Si modificas muchos archivos: reindexa
->> LIMPIAR
->> INGESTAR
+# If you modify many files: re-index
+>> CLEAR
+>> INGEST
 ```
 
-**[💬 Ver ejemplos completos de conversaciones →](docs/EXAMPLES.md)**
+**[💬 See full conversation examples →](docs/EXAMPLES.md)**
 
 ---
 
-<a name="arquitectura"></a>
+<a name="architecture"></a>
 
-## 🏗️ Arquitectura
+## 🏗️ Architecture
 
 ```
 NoPilot/
-├── 📄 appsettings.json          # Configuración central
+├── 📄 appsettings.json          # Central configuration
 ├── 📁 Configuration/
-│   └── AppSettings.cs           # POCOs fuertemente tipados
+│   └── AppSettings.cs           # Strongly typed POCOs
 ├── 📁 Models/
-│   ├── DocumentChunk.cs         # Fragmento de código + embedding
-│   └── SearchResult.cs          # Resultado de búsqueda semántica
+│   ├── DocumentChunk.cs         # Code chunk + embedding
+│   └── SearchResult.cs          # Semantic search result
 ├── 📁 Services/
-│   ├── VectorStoreService.cs    # SQLite + sqlite-vec (búsqueda KNN)
-│   ├── IngestionService.cs      # Lectura, chunking, generación de embeddings
-│   └── ChatService.cs           # Pipeline RAG con historial
+│   ├── VectorStoreService.cs    # SQLite + sqlite-vec (KNN search)
+│   ├── IngestionService.cs      # File reading, chunking, embedding generation
+│   └── ChatService.cs           # RAG pipeline with history
 ├── 📁 Plugins/
-│   └── CodebasePlugin.cs        # SK Plugin para function calling
-└── 📄 Program.cs                # DI, inicialización, bucle de consola
+│   └── CodebasePlugin.cs        # SK Plugin for function calling
+└── 📄 Program.cs                # DI, initialization, console loop
 ```
 
-### Stack Tecnológico
+### Tech Stack
 
-| Componente | Tecnología | Versión |
-|------------|------------|---------|
+| Component | Technology | Version |
+|-----------|------------|---------|
 | **Framework** | .NET | 10.0 |
 | **AI Orchestration** | [Semantic Kernel](https://github.com/microsoft/semantic-kernel) | 1.73.0 |
-| **LLM Local** | [Ollama](https://ollama.ai/) + [deepseek-coder](https://ollama.ai/library/deepseek-coder) | 6.7b |
+| **Local LLM** | [Ollama](https://ollama.ai/) + [deepseek-coder](https://ollama.ai/library/deepseek-coder) | 6.7b |
 | **Embeddings** | [mxbai-embed-large](https://ollama.ai/library/mxbai-embed-large) | 1024d |
 | **Vector Store** | [SQLite](https://www.sqlite.org/) + [sqlite-vec](https://github.com/asg017/sqlite-vec) | 0.1.7-alpha.2 |
 | **Dependency Injection** | Microsoft.Extensions.DependencyInjection | 10.0.2 |
 
-**[🏗️ Arquitectura técnica completa con diagramas →](docs/ARCHITECTURE.md)**
+**[🏗️ Full technical architecture with diagrams →](docs/ARCHITECTURE.md)**
 
 ---
 
-<a name="como-funciona"></a>
+<a name="how-it-works"></a>
 
-## 🔍 Cómo Funciona
+## 🔍 How It Works
 
-### Pipeline de Ingesta
+### Ingestion Pipeline
 
 ```
-📁 Archivos en disco
-    ↓ Lectura + filtrado por extensión (.cs, .ts, .py...)
-📝 Chunking con overlap
-    ↓ División inteligente (1500 chars, overlap 200)
-🧠 Generación de embeddings
-    ↓ mxbai-embed-large → 1024 dimensiones
+📁 Files on disk
+    ↓ Read + filter by extension (.cs, .ts, .py...)
+📝 Chunking with overlap
+    ↓ Smart splitting (1500 chars, overlap 200)
+🧠 Embedding generation
+    ↓ mxbai-embed-large → 1024 dimensions
 💾 SQLite + sqlite-vec
-    ↓ Almacenamiento con índice KNN optimizado
-✅ Listo para búsqueda
+    ↓ Storage with optimized KNN index
+✅ Ready for search
 ```
 
-### Pipeline de Chat RAG
+### RAG Chat Pipeline
 
 ```
-💬 Pregunta del usuario
-    ↓ "¿Cómo funciona la autenticación?"
-🔢 Embedding de la pregunta
+💬 User question
+    ↓ "How does authentication work?"
+🔢 Question embedding
     ↓ mxbai-embed-large → float[1024]
-🔍 Búsqueda vectorial KNN
-    ↓ sqlite-vec: Top 5 chunks más similares
-📋 Construcción del contexto
-    ↓ System prompt + Historial + Chunks relevantes
-🤖 Generación con LLM
+🔍 KNN vector search
+    ↓ sqlite-vec: Top 5 most similar chunks
+📋 Context construction
+    ↓ System prompt + History + Relevant chunks
+🤖 LLM generation
     ↓ deepseek-coder:6.7b
-⚡ Streaming de respuesta
-    ↓ Token por token
-📺 Respuesta con contexto
+⚡ Response streaming
+    ↓ Token by token
+📺 Response with context
 ```
 
-### Tecnología Vector Store
+### Vector Store Technology
 
-`sqlite-vec` extiende SQLite con capacidades de búsqueda vectorial eficiente:
+`sqlite-vec` extends SQLite with efficient vector search capabilities:
 
 ```sql
 -- Tabla de metadatos
@@ -349,43 +349,43 @@ WHERE v.embedding MATCH @query_vector
 ORDER BY v.distance ASC;
 ```
 
-**Performance:** ~5-10ms para búsqueda en 10K vectores, ~15-30ms en 100K vectores.
+**Performance:** ~5-10ms for search across 10K vectors, ~15-30ms across 100K vectors.
 
-**[🔬 Pipeline técnico detallado →](docs/ARCHITECTURE.md)**
+**[🔬 Detailed technical pipeline →](docs/ARCHITECTURE.md)**
 
 ---
 
-<a name="casos-de-uso"></a>
+<a name="use-cases"></a>
 
-## 🎯 Casos de Uso
+## 🎯 Use Cases
 
-### 👨‍💻 Para Desarrolladores
+### 👨‍💻 For Developers
 
-- **Onboarding**: "¿Cómo funciona el sistema de autenticación?"
-- **Debugging**: "¿Dónde se maneja el error 'NullReferenceException' en el servicio de usuarios?"
-- **Refactoring**: "¿Qué archivos usan la interfaz `IRepository`?"
-- **Arquitectura**: "Explica el patrón de inyección de dependencias usado en este proyecto"
-- **API Discovery**: "Lista todos los endpoints HTTP del proyecto"
+- **Onboarding**: "How does the authentication system work?"
+- **Debugging**: "Where is the 'NullReferenceException' error handled in the user service?"
+- **Refactoring**: "Which files use the `IRepository` interface?"
+- **Architecture**: "Explain the dependency injection pattern used in this project"
+- **API Discovery**: "List all HTTP endpoints in the project"
 
-### 🔍 Para Code Review
+### 🔍 For Code Review
 
-- "¿Hay validaciones de entrada en los endpoints de la API?"
-- "¿Se usa async/await correctamente en las llamadas a base de datos?"
-- "Lista todos los lugares donde se accede directamente a `HttpContext`"
-- "¿Hay código duplicado en los controladores?"
+- "Are there input validations on the API endpoints?"
+- "Is async/await used correctly in database calls?"
+- "List all places where `HttpContext` is accessed directly"
+- "Is there duplicated code in the controllers?"
 
-### 📚 Para Documentación
+### 📚 For Documentation
 
-- "Genera una descripción de los servicios principales del proyecto"
-- "¿Qué patrones de diseño se utilizan?"
-- "Documenta el flujo de autenticación paso a paso"
+- "Generate a description of the project's main services"
+- "What design patterns are used?"
+- "Document the authentication flow step by step"
 
-### 🧪 Para Testing
+### 🧪 For Testing
 
-- "¿Qué clases no tienen tests unitarios?"
-- "¿Cómo se mockea la base de datos en los tests?"
+- "Which classes don't have unit tests?"
+- "How is the database mocked in tests?"
 
-**[💡 Ver ejemplos completos de conversaciones →](docs/EXAMPLES.md)**
+**[💡 See full conversation examples →](docs/EXAMPLES.md)**
 
 ---
 
@@ -393,11 +393,11 @@ ORDER BY v.distance ASC;
 
 ## 🔧 Troubleshooting
 
-### ❌ Error: `No se puede encontrar el módulo especificado` (sqlite-vec)
+### ❌ Error: `The specified module could not be found` (sqlite-vec)
 
-**Causa:** La extensión nativa `vec0.dll` no se cargó correctamente.
+**Cause:** The native `vec0.dll` extension failed to load.
 
-**Solución:**
+**Solution:**
 ```bash
 dotnet clean
 dotnet build
@@ -410,52 +410,52 @@ Verifica que `vec0.dll` existe en:
 
 ### ❌ Error: Connection refused (Ollama)
 
-**Causa:** El servicio de Ollama no está corriendo.
+**Cause:** The Ollama service is not running.
 
-**Solución:**
+**Solution:**
 ```bash
-# Terminal 1: Inicia Ollama
+# Terminal 1: Start Ollama
 ollama serve
 
-# Terminal 2: Verifica conectividad
+# Terminal 2: Verify connectivity
 curl http://localhost:11434/api/tags
 
-# Verifica que los modelos estén descargados
+# Verify that models are downloaded
 ollama list
 ```
 
-### ❌ Embeddings con dimensiones incorrectas
+### ❌ Embeddings with incorrect dimensions
 
-**Causa:** Cambiaste el modelo de embeddings pero no actualizaste `EmbeddingDimension`.
+**Cause:** You changed the embeddings model but didn't update `EmbeddingDimension`.
 
-**Solución:**
-1. Consulta la dimensión del modelo:
+**Solution:**
+1. Check the model's dimension:
    ```bash
    ollama show mxbai-embed-large | grep "embedding"
    ```
-2. Actualiza `Ollama.EmbeddingDimension` en `appsettings.json`
-3. Elimina la base de datos y reindexa:
+2. Update `Ollama.EmbeddingDimension` in `appsettings.json`
+3. Delete the database and re-index:
    ```bash
    rm nopilot.db
    dotnet run
-   >> INGESTAR
+   >> INGEST
    ```
 
-### ⚠️ Ingesta muy lenta
+### ⚠️ Ingestion is very slow
 
-**Causas posibles:**
-- Carpeta muy grande (>1000 archivos)
-- Ollama corriendo solo en CPU
-- Modelo de embeddings pesado
+**Possible causes:**
+- Very large folder (>1000 files)
+- Ollama running on CPU only
+- Heavy embeddings model
 
-**Optimizaciones:**
-1. Reduce `ChunkSize` a 1000 en `appsettings.json`
-2. Limita `SupportedExtensions` a solo las extensiones críticas
-3. Reduce `MaxFileSizeBytes` a 512KB
-4. Usa un modelo de embeddings más rápido: `nomic-embed-text` (768d)
-5. Si tienes GPU: configura Ollama para usar CUDA
+**Optimizations:**
+1. Reduce `ChunkSize` to 1000 in `appsettings.json`
+2. Limit `SupportedExtensions` to only the critical extensions
+3. Reduce `MaxFileSizeBytes` to 512KB
+4. Use a faster embeddings model: `nomic-embed-text` (768d)
+5. If you have a GPU: configure Ollama to use CUDA
 
-**[🔧 Troubleshooting completo →](docs/QUICKSTART.md#-troubleshooting-rápido)**
+**[🔧 Full troubleshooting guide →](docs/QUICKSTART.md#-troubleshooting)**
 
 ---
 
@@ -463,116 +463,116 @@ ollama list
 
 ## 🧪 Roadmap
 
-### v0.2 (Próximamente)
+### v0.2 (Coming soon)
 
-- [ ] **Ingesta incremental**: Detectar archivos modificados y reindexar solo esos
-- [ ] **Progress bar**: Visualización del progreso de ingesta
-- [ ] **Config watcher**: Recargar `appsettings.json` sin reiniciar
+- [ ] **Incremental ingestion**: Detect modified files and re-index only those
+- [ ] **Progress bar**: Visual progress display during ingestion
+- [ ] **Config watcher**: Reload `appsettings.json` without restarting
 
 ### v0.3
 
-- [ ] **Interfaz web**: Blazor Server o REST API
-- [ ] **Múltiples carpetas**: Indexar varios proyectos en la misma base
-- [ ] **Export/Import**: Backup y restauración de índices
+- [ ] **Web interface**: Blazor Server or REST API
+- [ ] **Multiple folders**: Index several projects in the same database
+- [ ] **Export/Import**: Index backup and restore
 
 ### v1.0
 
-- [ ] **Git integration**: Indexar solo commits específicos o ramas
-- [ ] **Tests unitarios**: Cobertura >80%
-- [ ] **Docker**: Imagen con Ollama preconfigurado
-- [ ] **Azure OpenAI**: Soporte como alternativa a Ollama
+- [ ] **Git integration**: Index only specific commits or branches
+- [ ] **Unit tests**: Coverage >80%
+- [ ] **Docker**: Image with Ollama pre-configured
+- [ ] **Azure OpenAI**: Support as an alternative to Ollama
 
-### Ideas futuras
+### Future ideas
 
-- [ ] Plugin de VSCode
-- [ ] Métricas de relevancia (feedback loop)
-- [ ] Soporte para documentación externa (URLs, PDFs)
-- [ ] Multi-language RAG (cambiar idioma del asistente)
+- [ ] VSCode plugin
+- [ ] Relevance metrics (feedback loop)
+- [ ] Support for external documentation (URLs, PDFs)
+- [ ] Multi-language RAG (change assistant language)
 
-**[🗳️ Vota por features](https://github.com/ArmandIsCoding/NoPilot/discussions) o propón nuevas ideas!**
-
----
-
-<a name="contribuir"></a>
-
-## 🤝 Contribuir
-
-¡Las contribuciones son bienvenidas! Aquí hay varias formas de ayudar:
-
-### 🐛 Reportar Bugs
-
-Abre un [issue](https://github.com/ArmandIsCoding/NoPilot/issues) con:
-- Descripción del problema
-- Pasos para reproducir
-- Logs de error
-- Versiones de software (.NET, Ollama, OS)
-
-### ✨ Proponer Features
-
-Abre un [discussion](https://github.com/ArmandIsCoding/NoPilot/discussions) o [issue](https://github.com/ArmandIsCoding/NoPilot/issues) con el tag `enhancement`.
-
-### 💻 Contribuir Código
-
-1. 🍴 Fork el proyecto
-2. 🌿 Crea tu rama (`git checkout -b feature/AmazingFeature`)
-3. 💾 Commitea tus cambios (`git commit -m "feat: add amazing feature"`)
-4. 📤 Push a la rama (`git push origin feature/AmazingFeature`)
-5. 🎯 Abre un Pull Request
-
-### Áreas prioritarias
-
-- 🧪 **Tests**: Añadir cobertura de tests unitarios e integración
-- ⚡ **Performance**: Optimizar ingesta (paralelización, batch embeddings)
-- 🎨 **UI**: Crear interfaz web con Blazor o React
-- 📝 **Docs**: Mejorar documentación con más ejemplos
-- 🌍 **i18n**: Traducir mensajes de consola
-
-**[📖 Guía completa de contribución →](CONTRIBUTING.md)**
+**[🗳️ Vote for features](https://github.com/ArmandIsCoding/NoPilot/discussions) or propose new ideas!**
 
 ---
 
-<a name="licencia"></a>
+<a name="contributing"></a>
 
-## 📜 Licencia
+## 🤝 Contributing
 
-Este proyecto está bajo la **licencia MIT**. Puedes usarlo, modificarlo y distribuirlo libremente. Ver [LICENSE](LICENSE) para más detalles.
+Contributions are welcome! Here are several ways to help:
+
+### 🐛 Report Bugs
+
+Open an [issue](https://github.com/ArmandIsCoding/NoPilot/issues) with:
+- Problem description
+- Steps to reproduce
+- Error logs
+- Software versions (.NET, Ollama, OS)
+
+### ✨ Propose Features
+
+Open a [discussion](https://github.com/ArmandIsCoding/NoPilot/discussions) or [issue](https://github.com/ArmandIsCoding/NoPilot/issues) with the `enhancement` tag.
+
+### 💻 Contribute Code
+
+1. 🍴 Fork the project
+2. 🌿 Create your branch (`git checkout -b feature/AmazingFeature`)
+3. 💾 Commit your changes (`git commit -m "feat: add amazing feature"`)
+4. 📤 Push to the branch (`git push origin feature/AmazingFeature`)
+5. 🎯 Open a Pull Request
+
+### Priority areas
+
+- 🧪 **Tests**: Add unit and integration test coverage
+- ⚡ **Performance**: Optimize ingestion (parallelization, batch embeddings)
+- 🎨 **UI**: Create a web interface with Blazor or React
+- 📝 **Docs**: Improve documentation with more examples
+- 🌍 **i18n**: Translate console messages
+
+**[📖 Full contribution guide →](CONTRIBUTING.md)**
 
 ---
 
-## 🙏 Agradecimientos
+<a name="license"></a>
 
-Este proyecto se construye sobre los hombros de gigantes:
+## 📜 License
 
-- [**Semantic Kernel**](https://github.com/microsoft/semantic-kernel) - Framework de orquestación de IA de Microsoft
-- [**Ollama**](https://ollama.ai/) - Ejecución local de LLMs sin complicaciones
-- [**sqlite-vec**](https://github.com/asg017/sqlite-vec) - Extensión de vectores para SQLite por Alex Garcia
-- [**DeepSeek Coder**](https://github.com/deepseek-ai/DeepSeek-Coder) - Modelo especializado en código
-- [**mxbai-embed-large**](https://huggingface.co/mixedbread-ai/mxbai-embed-large-v1) - Modelo de embeddings de mixedbread.ai
-
-Mención especial a la comunidad open source de .NET y IA.
+This project is under the **MIT license**. You can use, modify, and distribute it freely. See [LICENSE](LICENSE) for more details.
 
 ---
 
-## 📬 Contacto y Comunidad
+## 🙏 Acknowledgements
+
+This project is built on the shoulders of giants:
+
+- [**Semantic Kernel**](https://github.com/microsoft/semantic-kernel) - Microsoft's AI orchestration framework
+- [**Ollama**](https://ollama.ai/) - Hassle-free local LLM execution
+- [**sqlite-vec**](https://github.com/asg017/sqlite-vec) - SQLite vector extension by Alex Garcia
+- [**DeepSeek Coder**](https://github.com/deepseek-ai/DeepSeek-Coder) - Code-specialized model
+- [**mxbai-embed-large**](https://huggingface.co/mixedbread-ai/mxbai-embed-large-v1) - Embeddings model by mixedbread.ai
+
+Special thanks to the .NET and AI open source community.
+
+---
+
+## 📬 Contact & Community
 
 - **GitHub**: [@ArmandIsCoding](https://github.com/ArmandIsCoding)
-- **Discussions**: [Foro de discusión](https://github.com/ArmandIsCoding/NoPilot/discussions)
-- **Issues**: [Reportar bugs](https://github.com/ArmandIsCoding/NoPilot/issues)
+- **Discussions**: [Discussion forum](https://github.com/ArmandIsCoding/NoPilot/discussions)
+- **Issues**: [Report bugs](https://github.com/ArmandIsCoding/NoPilot/issues)
 
 ---
 
-## ⭐ Muestra tu apoyo
+## ⭐ Show Your Support
 
-Si **NoPilot** te resulta útil:
+If **NoPilot** is useful to you:
 
-1. ⭐ Dale una estrella al repositorio
-2. 🐦 Compártelo en redes sociales
-3. 📝 Escribe un artículo sobre tu experiencia
-4. 🤝 Contribuye con código o documentación
+1. ⭐ Star the repository
+2. 🐦 Share it on social media
+3. 📝 Write an article about your experience
+4. 🤝 Contribute with code or documentation
 
 ---
 
-## 📊 Stats del Proyecto
+## 📊 Project Stats
 
 ![GitHub stars](https://img.shields.io/github/stars/ArmandIsCoding/NoPilot?style=social)
 ![GitHub forks](https://img.shields.io/github/forks/ArmandIsCoding/NoPilot?style=social)
@@ -583,7 +583,7 @@ Si **NoPilot** te resulta útil:
 
 <div align="center">
 
-**[⬆ Volver arriba](#-nopilot)**
+**[⬆ Back to top](#-nopilot)**
 
 ---
 
