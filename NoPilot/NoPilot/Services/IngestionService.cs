@@ -7,6 +7,9 @@ namespace NoPilot.Services;
 
 public sealed class IngestionService : IIngestionService
 {
+    private const int MinChunkBodyChars = 200;
+    private const int MaxSplitRetries = 3;
+
     private readonly Kernel _kernel;
     private readonly IVectorStoreService _vectorStore;
     private readonly AppSettings _settings;
@@ -50,6 +53,7 @@ public sealed class IngestionService : IIngestionService
         int processedFiles = 0;
         int processedChunks = 0;
         int skippedFiles = 0;
+        int skippedChunks = 0;
 
         foreach (var filePath in files)
         {
@@ -66,27 +70,33 @@ public sealed class IngestionService : IIngestionService
 
                 var relativePath = Path.GetRelativePath(sourceFolder, filePath);
                 var chunks = SplitIntoChunks(content, relativePath).ToList();
+                int nextChunkIndex = 0;
 
-                foreach (var (chunkText, chunkIndex) in chunks)
+                foreach (var chunkText in chunks)
                 {
                     if (cancellationToken.IsCancellationRequested) break;
 
-                    var embeddings = await embeddingService.GenerateAsync(
-                        [chunkText], cancellationToken: cancellationToken);
+                    var processedFromChunk = await ProcessChunkWithRetryAsync(
+                        embeddingService,
+                        relativePath,
+                        chunkText,
+                        nextChunkIndex,
+                        0,
+                        cancellationToken);
 
-                    await _vectorStore.UpsertChunkAsync(new DocumentChunk
-                    {
-                        FilePath = relativePath,
-                        Content = chunkText,
-                        ChunkIndex = chunkIndex,
-                        Embedding = embeddings[0].Vector.ToArray()
-                    });
+                    nextChunkIndex += processedFromChunk;
+                    processedChunks += processedFromChunk;
 
-                    processedChunks++;
+                    if (processedFromChunk == 0)
+                        skippedChunks++;
                 }
 
-                processedFiles++;
-                Console.Write($"\r[INGESTAR] {processedFiles}/{files.Count} archivos | {processedChunks} chunks | {skippedFiles} omitidos     ");
+                if (nextChunkIndex > 0)
+                    processedFiles++;
+                else
+                    skippedFiles++;
+
+                Console.Write($"\r[INGESTAR] {processedFiles}/{files.Count} archivos | {processedChunks} chunks | {skippedFiles} omitidos ({skippedChunks} chunks)     ");
             }
             catch (OperationCanceledException)
             {
@@ -103,7 +113,7 @@ public sealed class IngestionService : IIngestionService
 
         Console.WriteLine();
         Console.ForegroundColor = ConsoleColor.Green;
-        Console.WriteLine($"[INGESTAR] Completado: {processedFiles} archivos, {processedChunks} chunks indexados, {skippedFiles} omitidos.");
+        Console.WriteLine($"[INGESTAR] Completado: {processedFiles} archivos, {processedChunks} chunks indexados, {skippedFiles} archivos omitidos, {skippedChunks} chunks omitidos.");
         Console.ResetColor();
     }
 
@@ -122,49 +132,158 @@ public sealed class IngestionService : IIngestionService
             .ToList();
     }
 
-    private IEnumerable<(string text, int index)> SplitIntoChunks(string content, string relativePath)
+    private async Task<int> ProcessChunkWithRetryAsync(
+        IEmbeddingGenerator<string, Embedding<float>> embeddingService,
+        string relativePath,
+        string chunkText,
+        int chunkIndex,
+        int retryDepth,
+        CancellationToken cancellationToken)
     {
-        var chunkSize = _settings.Ingestion.ChunkSize;
-        var overlap = _settings.Ingestion.ChunkOverlap;
-        var header = $"// Archivo: {relativePath}\n";
-        var lines = content.Split('\n');
-
-        var currentChunk = new System.Text.StringBuilder(header);
-        int chunkIndex = 0;
-        int currentSize = header.Length;
-
-        foreach (var line in lines)
+        try
         {
-            if (currentSize + line.Length + 1 > chunkSize && currentSize > header.Length)
-            {
-                var chunkText = currentChunk.ToString().TrimEnd();
-                if (!string.IsNullOrWhiteSpace(chunkText))
-                    yield return (chunkText, chunkIndex++);
+            var embeddings = await embeddingService.GenerateAsync(
+                [chunkText], cancellationToken: cancellationToken);
 
-                var overlapText = ExtractOverlap(chunkText, overlap);
-                currentChunk.Clear();
-                currentChunk.Append(header);
-                currentChunk.Append(overlapText);
-                currentSize = header.Length + overlapText.Length;
+            await _vectorStore.UpsertChunkAsync(new DocumentChunk
+            {
+                FilePath = relativePath,
+                Content = chunkText,
+                ChunkIndex = chunkIndex,
+                Embedding = embeddings[0].Vector.ToArray()
+            });
+
+            return 1;
+        }
+        catch (Exception ex) when (IsContextLengthError(ex) && retryDepth < MaxSplitRetries)
+        {
+            var header = BuildChunkHeader(relativePath);
+            var body = ExtractBody(chunkText, header);
+            var currentBodyBudget = Math.Max(MinChunkBodyChars, chunkText.Length - header.Length);
+            var splitBodyBudget = Math.Max(MinChunkBodyChars, currentBodyBudget / 2);
+
+            if (splitBodyBudget >= currentBodyBudget)
+            {
+                ReportSkippedChunk(relativePath, chunkIndex, retryDepth, ex.Message);
+                return 0;
             }
 
-            currentChunk.AppendLine(line);
-            currentSize += line.Length + 1;
-        }
+            var splitOverlap = Math.Min(_settings.Ingestion.ChunkOverlap, Math.Max(0, splitBodyBudget / 4));
+            var subChunks = SplitContentWithOverlap(body, header, splitBodyBudget, splitOverlap).ToList();
 
-        if (currentSize > header.Length)
+            if (subChunks.Count <= 1)
+            {
+                ReportSkippedChunk(relativePath, chunkIndex, retryDepth, ex.Message);
+                return 0;
+            }
+
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
+            Console.WriteLine($"\n[AVISO] Chunk de '{relativePath}' excedio contexto; subdividiendo en {subChunks.Count} partes (reintento {retryDepth + 1}/{MaxSplitRetries}).");
+            Console.ResetColor();
+
+            int processed = 0;
+            foreach (var subChunk in subChunks)
+            {
+                processed += await ProcessChunkWithRetryAsync(
+                    embeddingService,
+                    relativePath,
+                    subChunk,
+                    chunkIndex + processed,
+                    retryDepth + 1,
+                    cancellationToken);
+            }
+
+            return processed;
+        }
+        catch (Exception ex) when (IsContextLengthError(ex))
         {
-            var lastChunk = currentChunk.ToString().TrimEnd();
-            if (!string.IsNullOrWhiteSpace(lastChunk))
-                yield return (lastChunk, chunkIndex);
+            ReportSkippedChunk(relativePath, chunkIndex, retryDepth, ex.Message);
+            return 0;
         }
     }
 
-    private static string ExtractOverlap(string text, int overlapLength)
+    private IEnumerable<string> SplitIntoChunks(string content, string relativePath)
     {
-        if (text.Length <= overlapLength) return text;
-        var cutPoint = text.Length - overlapLength;
-        var newlinePos = text.IndexOf('\n', cutPoint);
-        return newlinePos >= 0 ? text[(newlinePos + 1)..] : text[cutPoint..];
+        var header = BuildChunkHeader(relativePath);
+        var normalized = content.Replace("\r\n", "\n");
+        var configuredChunkSize = Math.Max(MinChunkBodyChars, _settings.Ingestion.ChunkSize);
+        var safeLimit = Math.Max(MinChunkBodyChars, _settings.Ingestion.MaxEmbeddingInputChars - _settings.Ingestion.EmbeddingInputSafetyMarginChars);
+        var effectiveChunkSize = Math.Max(MinChunkBodyChars, Math.Min(configuredChunkSize, safeLimit));
+        var bodyBudget = Math.Max(MinChunkBodyChars, effectiveChunkSize - header.Length);
+        var overlap = Math.Min(_settings.Ingestion.ChunkOverlap, Math.Max(0, bodyBudget - 1));
+
+        return SplitContentWithOverlap(normalized, header, bodyBudget, overlap);
+    }
+
+    private static IEnumerable<string> SplitContentWithOverlap(string content, string header, int bodyBudget, int overlap)
+    {
+        if (string.IsNullOrWhiteSpace(content))
+            yield break;
+
+        int start = 0;
+
+        while (start < content.Length)
+        {
+            var maxEnd = Math.Min(start + bodyBudget, content.Length);
+            var end = maxEnd;
+
+            if (maxEnd < content.Length)
+            {
+                var candidate = FindNaturalSplit(content, start, maxEnd);
+                if (candidate > start)
+                    end = candidate;
+            }
+
+            var body = content[start..end].Trim('\n', '\r');
+            if (!string.IsNullOrWhiteSpace(body))
+                yield return header + body;
+
+            if (end >= content.Length)
+                break;
+
+            var nextStart = Math.Max(0, end - overlap);
+            if (nextStart <= start)
+                nextStart = end;
+
+            start = nextStart;
+        }
+    }
+
+    private static int FindNaturalSplit(string content, int start, int proposedEnd)
+    {
+        var lookBack = Math.Min(300, proposedEnd - start);
+        var minSearch = Math.Max(start + 1, proposedEnd - lookBack);
+
+        for (int i = proposedEnd - 1; i >= minSearch; i--)
+        {
+            if (content[i] == '\n')
+                return i + 1;
+        }
+
+        for (int i = proposedEnd - 1; i >= minSearch; i--)
+        {
+            if (char.IsWhiteSpace(content[i]))
+                return i + 1;
+        }
+
+        return proposedEnd;
+    }
+
+    private static string BuildChunkHeader(string relativePath) => $"// Archivo: {relativePath}\n";
+
+    private static string ExtractBody(string chunkText, string header)
+    {
+        return chunkText.StartsWith(header, StringComparison.Ordinal) ? chunkText[header.Length..] : chunkText;
+    }
+
+    private static bool IsContextLengthError(Exception ex)
+        => ex.Message.Contains("context length", StringComparison.OrdinalIgnoreCase)
+           || ex.Message.Contains("input length exceeds", StringComparison.OrdinalIgnoreCase);
+
+    private static void ReportSkippedChunk(string relativePath, int chunkIndex, int retryDepth, string message)
+    {
+        Console.ForegroundColor = ConsoleColor.DarkYellow;
+        Console.WriteLine($"\n[AVISO] Chunk omitido en '{relativePath}' (indice {chunkIndex}, reintentos {retryDepth}): {message}");
+        Console.ResetColor();
     }
 }

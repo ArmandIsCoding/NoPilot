@@ -104,6 +104,7 @@ while (!cts.IsCancellationRequested)
 Console.ForegroundColor = ConsoleColor.DarkGray;
 Console.WriteLine("Hasta luego.");
 Console.ResetColor();
+return;
 
 // ── Funciones auxiliares ───────────────────────────────────────────────────────
 static void PrintBanner(AppSettings cfg, long chunkCount)

@@ -25,6 +25,15 @@ public sealed class IngestionSettings
     public string[] SupportedExtensions { get; set; } = [".cs", ".md", ".txt"];
     public int ChunkSize { get; set; } = 1500;
     public int ChunkOverlap { get; set; } = 200;
+    /// <summary>
+    /// Limite duro (aprox. en caracteres) para cada texto enviado al modelo de embeddings.
+    /// </summary>
+    public int MaxEmbeddingInputChars { get; set; } = 6000;
+
+    /// <summary>
+    /// Margen de seguridad para evitar sobrepasar el contexto del proveedor de embeddings.
+    /// </summary>
+    public int EmbeddingInputSafetyMarginChars { get; set; } = 500;
     public long MaxFileSizeBytes { get; set; } = 1_048_576;
 }
 
